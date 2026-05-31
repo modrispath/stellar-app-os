@@ -55,9 +55,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         className={cn(
           textareaVariants({ variant, inputSize, resize, className }),
           hasError &&
+            variant !== 'destructive' &&
             'border-destructive/50 text-destructive focus-visible:border-destructive focus-visible:ring-destructive'
         )}
-        aria-invalid={hasError || ariaInvalid}
+        aria-invalid={hasError ? true : ariaInvalid}
         ref={ref}
         {...props}
       />

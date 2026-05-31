@@ -56,7 +56,7 @@ const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
           id={inputId}
           variant={hasError ? 'destructive' : variant}
           className={className}
-          aria-invalid={hasError || ariaInvalid}
+          aria-invalid={hasError ? true : ariaInvalid}
           aria-describedby={describedBy}
           {...inputProps}
         />
