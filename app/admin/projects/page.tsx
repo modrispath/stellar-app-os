@@ -1,27 +1,27 @@
-import Link from "next/link";
-import type { ReactNode } from "react";
-import { Badge } from "@/components/atoms/Badge";
-import { Button } from "@/components/atoms/Button";
-import { Text } from "@/components/atoms/Text";
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+import { Badge } from '@/components/atoms/Badge';
+import { Button } from '@/components/atoms/Button';
+import { Text } from '@/components/atoms/Text';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/molecules/Card";
-import { mockAdminProjectDetails } from "@/lib/api/mock/adminProjectDetails";
+} from '@/components/molecules/Card';
+import { mockAdminProjectDetails } from '@/lib/api/mock/adminProjectDetails';
 
 export default function AdminProjectsPage(): ReactNode {
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-8 sm:py-10">
+    <div className="container mx-auto max-w-7xl px-4 py-8 sm:py-10">
       <div className="mb-8">
         <Text as="h1" variant="h2" className="mb-2">
           Admin Projects
         </Text>
         <Text as="p" variant="muted">
-          Open a project to manage editable fields, MRV documents, verification,
-          issuance history, and activity logs.
+          Open a project to manage editable fields, MRV documents, verification, issuance history,
+          and activity logs.
         </Text>
       </div>
 
@@ -36,8 +36,8 @@ export default function AdminProjectsPage(): ReactNode {
                 </CardDescription>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Badge variant={project.verificationEnabled ? "success" : "secondary"}>
-                  {project.verificationEnabled ? "Verified" : "Verification Off"}
+                <Badge variant={project.verificationEnabled ? 'success' : 'secondary'}>
+                  {project.verificationEnabled ? 'Verified' : 'Verification Off'}
                 </Badge>
                 <Badge variant="outline">{project.lifecycleStatus}</Badge>
               </div>

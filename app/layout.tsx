@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import Script from 'next/script';
+import { Header } from '@/components/organisms/Header/Header';
 import { Footer } from '@/components/organisms/Footer/Footer';
-
-const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
-});
+import { CookieBanner } from '@/components/CookieBanner';
+import { ToastProvider } from '@/components/providers/ToastProvider';
+import { WalletProviderWrapper } from '@/components/providers/WalletProviderWrapper';
+import { FavoritesProvider } from '@/contexts/FavouritesContext';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'FarmCredit',
@@ -40,13 +40,15 @@ export const viewport: Viewport = {
   userScalable: true,
 };
 
+import { QueryProvider } from '@/components/providers/QueryProvider';
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -54,9 +56,35 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="FarmCredit" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
-        <Footer />
+      <body className="font-sans antialiased">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`
+            (function() {
+              try {
+                var stored = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+                document.documentElement.classList.toggle('dark', theme === 'dark');
+                document.documentElement.classList.add('no-transitions');
+                window.addEventListener('load', function() {
+                  document.documentElement.classList.remove('no-transitions');
+                });
+              } catch(e) {}
+            })();
+          `}
+        </Script>
+        <QueryProvider>
+          <WalletProviderWrapper>
+            <FavoritesProvider>
+              <ToastProvider>
+                <CookieBanner />
+                <Header />
+                {children}
+                <Footer />
+              </ToastProvider>
+            </FavoritesProvider>
+          </WalletProviderWrapper>
+        </QueryProvider>
       </body>
     </html>
   );
