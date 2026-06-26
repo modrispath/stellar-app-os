@@ -1228,4 +1228,42 @@ mod tests {
         ctx.client.release_proportional(&7, &1_000);
         ctx.client.release_proportional(&7, &1);
     }
+
+    use proptest::prelude::*;
+    use std::collections::HashSet;
+
+    proptest! {
+        #![proptest_config(ProptestConfig::with_cases(50))]
+        #[test]
+        fn test_tree_id_uniqueness_invariant(tree_ids in prop::collection::vec(0u64..1000u64, 1..30)) {
+            let ctx = setup();
+            let mut registered = HashSet::new();
+
+            for tree_id in tree_ids {
+                if registered.contains(&tree_id) {
+                    // Try to register the tree again. It must fail.
+                    let res = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                        ctx.client.register_tree(&tree_id, &ctx.farmer, &ctx.token);
+                    }));
+                    assert!(res.is_err(), "Expected panic when registering duplicate tree ID {}", tree_id);
+                } else {
+                    // Register the tree for the first time. It must succeed.
+                    ctx.client.register_tree(&tree_id, &ctx.farmer, &ctx.token);
+                    registered.insert(tree_id);
+
+                    // Verify that the tree can be retrieved and its info is correct
+                    let funding = ctx.client.get_tree_funding(&tree_id).unwrap();
+                    assert_eq!(funding.tree_id, tree_id);
+                    assert_eq!(funding.farmer, ctx.farmer);
+                    assert_eq!(funding.token, ctx.token);
+                }
+            }
+
+            // Post-condition: check that all registered tree IDs still exist and retrieve correctly
+            for tree_id in &registered {
+                let funding = ctx.client.get_tree_funding(tree_id).unwrap();
+                assert_eq!(funding.tree_id, *tree_id);
+            }
+        }
+    }
 }
